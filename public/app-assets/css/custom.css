@@ -1,0 +1,9 @@
+/* Custom CSS starts */
+
+.breadcrumb-item {
+    text-transform: capitalize;
+}
+
+.breadcrumb-card-head {
+    text-transform: capitalize;
+}

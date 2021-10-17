@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasswordReset as ModelsPasswordReset;
+use App\Models\User;
+use Exception;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -19,8 +23,37 @@ class NewPasswordController extends Controller
      * @return \Illuminate\View\View
      */
     public function create(Request $request)
-    {
-        return view('auth.reset-password', ['request' => $request]);
+    {   
+        
+
+        $obj=ModelsPasswordReset::where('token',$request->token)->latest()->get();
+        if($obj->isNotEmpty())
+        {      
+            try {
+            DB::beginTransaction();   
+                $user=$obj[0]->value('email');
+                    if (ModelsPasswordReset::where('email',$user)->latest()->delete()){
+                    DB::commit();
+                    return view('auth.reset-password', compact('user'));
+                    }else{
+                        DB::rollBack();
+                        return response()->json([
+                            'erorr'=>'saf',
+                        ]);
+                        return redirect('exception?message='. 'The Given link is Not Valid');
+                    }
+            }
+            catch(Exception $exception){
+                DB::rollBack();
+                return redirect('exception?message='.$exception->getMessage(). '');
+      
+            }
+       
+        }else{
+            return redirect('exception?message='. 'The Given link is Not Valid');
+            
+        }
+
     }
 
     /**
@@ -33,33 +66,35 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request)
     {
+      
         $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required','exists:users,email'],
+            'password'=>['confirmed','required','min:8','string']
+            
+        ],
+        [   
+            'email.required'    => 'Please Enter a Email',
+            'password.confirmed'=>'Password Not matched',
+        
         ]);
-
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
-
-                event(new PasswordReset($user));
+        try {
+            $identifier= Hash::make($request->password);
+            DB::beginTransaction(); 
+            $roles= User::where('email',$request->email)->update(['password'=>$identifier]);
+            if($roles){
+                
+                    DB::commit();
+                    $message = "Password Updated Successfully !";
+                    return response()->json(['status' => 422,'operation'=>1, 'message' => "Success"]);
             }
-        );
-
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                            ->withErrors(['email' => __($status)]);
+            else {
+                DB::rollBack();
+                return response()->json(['status' => 421,'operation'=>0, 'message' => "Password Updation Failed"]);
+            }
+        }
+        catch(Exception $exception){
+            DB::rollBack();
+            return response()->json(['status' => 403, 'message' => $exception->getMessage()]);
+        }
     }
 }

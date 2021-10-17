@@ -1,36 +1,59 @@
-<x-guest-layout>
-    <x-auth-card>
-        <x-slot name="logo">
-            <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-            </a>
-        </x-slot>
+ {{-- <form method="POST" action="{{ route('password.email') }}"> --}}
+@extends('layouts.auth.master')
+@push('extended-css')
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
+@endpush
+@section('content')
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+<div class="auth-wrapper auth-cover">
+    <div class="auth-inner row m-0">
+        <!-- Brand logo--><a class="brand-logo" href="{{route('login')}}">
+            
+           {{-- <img src="{{asset('assets/images/logo.png')}}"> --}}
+            <h2 class="brand-text text-primary ms-1">AMS</h2>
+        </a>
+        <!-- /Brand logo-->
+        <!-- Left Text-->
+        <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
+            <div class="w-100 d-lg-flex align-items-center justify-content-center px-5"><img class="img-fluid" src="{{asset('app-assets/images/pages/forgot-password-v2.svg')}}" alt="Forgot password AMS" /></div>
         </div>
-
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
-
-        <!-- Validation Errors -->
-        <x-auth-validation-errors class="mb-4" :errors="$errors" />
-
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-
-            <!-- Email Address -->
-            <div>
-                <x-label for="email" :value="__('Email')" />
-
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+        <!-- /Left Text-->
+        <!-- Forgot password-->
+        <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
+                <h2 class="card-title fw-bold mb-1">Forgot Password? 🔒</h2>
+                <p class="card-text mb-2">Enter your email and we'll send you instructions to reset your password</p>
+                <form class="auth-forgot-password-form mt-2" id="forget-password-form" action="{{ route('forget_password') }}" method="POST" novalidate>
+                    @csrf
+                    <div class="mb-1">
+                        <label class="form-label" for="forgot-password-email">Email</label>
+                        <input class="form-control" id="forgot-password-email" type="text" name="email" placeholder="*****@example.com" aria-describedby="forgot-password-email" autofocus="" tabindex="1" />
+                    </div>
+                    <button type="submit" class="btn btn-primary waves-effect w-100 forget-btn">
+                        <span class="spinner-border spinner-border-sm forget-spinner" role="status" aria-hidden="true"
+                            style="display: none"></span>
+                        <span class="ms-25 align-middle forget-btn-inner">Send Reset Link</span>
+                    </button>
+                  
+                </form>
+                <p class="text-center mt-2"><a href="{{route('login')}}"><i data-feather="chevron-left"></i> Back to login</a></p>
             </div>
+        </div>
+        <!-- /Forgot password-->
+    </div>
+</div>
 
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-button>
-            </div>
-        </form>
-    </x-auth-card>
-</x-guest-layout>
+@endsection
+
+@push('extended-js')
+<script>
+    let val = true;
+</script>
+<script src="{{asset('app-assets/js/scripts/pages/auth-forgot-password.js')}}"></script>
+<script src="{{asset('js/forget_password/forget_password.js')}}"></script>
+<script src="{{asset('js/dynamic_ajax.js')}}"></script>
+
+@endpush
+
+
+

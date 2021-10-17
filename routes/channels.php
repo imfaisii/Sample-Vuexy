@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -16,3 +18,25 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+
+Broadcast::channel('test', function ($user) {
+    return true;
+});
+
+Broadcast::channel('private-user-signed-up.1', function ($user) {
+        return true;
+});
+
+
+Broadcast::channel('socket.{user_id}', function ($user, $user_id) {       //that after . is recievers id 
+    return true;   
+});
+
+
+Broadcast::channel('listener.{user_id}', function ($user, $user_id) {       //that after . is recievers id 
+    return true; 
+});
+
+
+

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\UserAttributes;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,13 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        session(['login' => true]);
+
+        UserAttributes::where('id',auth()->user()->id)->update([
+            'status'=>'online',
+           
+        ]);
+        
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -43,6 +51,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request)
     {
+     
+        UserAttributes::where('id',auth()->user()->id)->update([
+            'status'=>'offline',
+            'is_available'=>0,
+        ]);
+      
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

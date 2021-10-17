@@ -23,7 +23,7 @@ class CreateUserAttributesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-        $userattr = array(
+         $userattr = array(
             array( 'user_type' => 'Super_Admin', 'user_id' => '1'),
 
         );

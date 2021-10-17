@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
@@ -24,6 +25,12 @@ class CreateUsersTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        $user = array(
+            array( 'name' => 'haamzaaay', 'email' => 'haamzaaay@gmail.com','password'=>'$2y$10$.bHebQkHgBrI0HXkVKimHOAnJoTeCMfW41iXN5TdZYnfVTkc6cqAa'),
+
+        );
+        DB::table('users')->insert($user);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateUserAttributesTable extends Migration
@@ -22,6 +23,11 @@ class CreateUserAttributesTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+        $userattr = array(
+            array( 'user_type' => 'Super_Admin', 'user_id' => '1'),
+
+        );
+        DB::table('user_attributes')->insert($userattr);
     }
 
     /**

@@ -38,6 +38,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('I_online', [MasterPageController::class, 'Status_Online'])->name('I_online');
     Route::post('I_offline', [MasterPageController::class, 'Status_Offline'])->name('I_offline');
     /* Routes for user online and offline system */
+    Route::get('/', function () {
+        return view('layouts.master');
+    });
 
     Route::get('/dashboard', function () {
         return view('layouts.master');

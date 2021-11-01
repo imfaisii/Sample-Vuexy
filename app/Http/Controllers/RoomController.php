@@ -23,7 +23,7 @@ class RoomController extends Controller
     public function agent_available(Request $request){
         try {
             DB::beginTransaction();
-            $room_id=Member::where('user_id',auth()->user()->id)->latest()->value('room_id'); //returning the first room id 
+            $room_id=$request->room_id; //returning the first room id 
             if($room_id==Null){
                 DB::rollBack();
                 return response()->json(['status' => 422, 'message' => "You cannot perfrom this action of destroying room"]);
@@ -142,7 +142,7 @@ class RoomController extends Controller
                 $Member1= Member::create(['room_id'=>$Room->id,'user_id'=>auth()->user()->id,'user_type'=>Auth::user()->load('UserAttributes')->UserAttributes->user_type]);
                 /* find the vela agent and assign him that user for support chat */
                       
-                   $vela_agent=UserAttributes::where('is_available','<',4)->where('is_available','>',0)->where('user_type','csr')->inRandomOrder()->first();
+                   $vela_agent=UserAttributes::where('is_available','<',4)->where('is_available','>',0)->where('status','online')->where('user_type','csr')->inRandomOrder()->first();
                     if($vela_agent){
                          $vela_agent->is_available += 1;
                           $vela_agent->save();

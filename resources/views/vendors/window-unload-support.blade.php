@@ -6,6 +6,9 @@
         $.ajax({
             type: "post",
             url: '{{route('support.agent_available')}}',
+              data: {
+            room_id: room_id,
+            },
             dataType: "json",
             success: function () {
             }

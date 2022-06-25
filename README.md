@@ -9,7 +9,6 @@ composer update
 php artisan migrate 
 .env file with mail setting 
 you can login with 
-email:haamzaaay@gmail.com
-password:bilalasd123
+
 
 Enjoy!!
